@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { FirebaseCodeErrorService } from 'src/app/services/firebase-code-error.service';
 
 @Component({
   selector: 'app-registro-usuario',
@@ -13,12 +14,18 @@ export class RegistroUsuarioComponent implements OnInit {
   registrarUsuario: FormGroup;
   loading: boolean = false;
 
-  constructor(private fb: FormBuilder, private afAuth: AngularFireAuth, private toastr: ToastrService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private afAuth: AngularFireAuth,
+    private toastr: ToastrService,
+    private router: Router,
+    private firebaseError: FirebaseCodeErrorService,
+  ) {
     this.registrarUsuario = this.fb.group({
-      email: ['', Validators.required],
-      password: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       repetirPassword: ['', Validators.required],
-    })
+    });
   }
 
   ngOnInit(): void {
@@ -28,7 +35,7 @@ export class RegistroUsuarioComponent implements OnInit {
     const email = this.registrarUsuario.value.email;
     const password = this.registrarUsuario.value.password;
     const repetirPassword = this.registrarUsuario.value.repetirPassword;
-
+    console.log(this.registrarUsuario)
     if (password !== repetirPassword) {
       this.toastr.error('Las contraseñas no coinciden', 'Error');
       return;
@@ -38,26 +45,20 @@ export class RegistroUsuarioComponent implements OnInit {
     this.afAuth
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
-        this.loading = false;
-        this.toastr.success('Usuario Registrado Exitosamente')
-        this.router.navigate(['/login']);
+        this.verificarCorreo();
       })
       .catch((error) => {
         this.loading = false;
-        this.toastr.error(this.firebaseError(error.code), 'Error');
+        this.toastr.error(this.firebaseError.codeError(error.code), 'Error');
       });
   }
 
-  firebaseError(code: string) {
-    switch (code) {
-      case 'auth/email-already-in-use':
-        return 'El Usuario ya existe';
-      case 'auth/weak-password':
-        return 'La contraseña es muy débil';
-      case 'auth/invalid-email':
-        return 'Correo Inválido';
-      default:
-        return 'Error desconocido'
-    }
+  verificarCorreo() {
+    this.afAuth.currentUser.then(user => user?.sendEmailVerification())
+      .then(() => {
+        this.toastr.info('Le enviamos un correo electronico para verificar su cuenta', 'Verificar Correo');
+        this.router.navigate(['/login']);
+      });
   }
+
 }
