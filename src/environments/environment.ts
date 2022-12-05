@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  baseUrlAPI: 'https://rickandmortyapi.com/api/character/',
   firebaseConfig: {
     apiKey: "AIzaSyDh4x5x-V8Th89kc4s8xOCLhhCEQXmP8xQ",
     authDomain: "proyectodwi-9f52b.firebaseapp.com",

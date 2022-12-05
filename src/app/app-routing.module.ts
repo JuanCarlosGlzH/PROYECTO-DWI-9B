@@ -13,6 +13,9 @@ const routes: Routes = [
   { path: 'verificar-correo', component: VerificarCorreoComponent},
   { path: 'recuperar-password', component: RecuperarPasswordComponent},
   { path: 'dashboard', component: DashboardComponent},
+  { path: 'home', loadChildren: () => import('./components/pages/home/home.module').then(m => m.HomeModule) },
+  { path: 'character-list', loadChildren: () => import('./components/pages/characters/characters-list/characters-list.module').then(m => m.CharactersListModule) },
+  { path: 'character-details/:id', loadChildren: () => import('./components/pages/characters/characters-details/characters-details.module').then(m => m.CharactersDetailsModule) },
   { path: '**', redirectTo: 'login', pathMatch: 'full'},
 ];
 

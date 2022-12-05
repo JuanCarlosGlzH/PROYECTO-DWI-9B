@@ -14,6 +14,8 @@ import { AngularFireModule } from '@angular/fire/compat'
 import { environment } from 'src/environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { FormSearchComponent } from './shared/components/form-search/form-search.component';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,8 @@ import { ToastrModule } from 'ngx-toastr';
     RegistroUsuarioComponent,
     VerificarCorreoComponent,
     RecuperarPasswordComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    FormSearchComponent
   ],
   imports: [
     BrowserModule,
@@ -32,6 +35,7 @@ import { ToastrModule } from 'ngx-toastr';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
